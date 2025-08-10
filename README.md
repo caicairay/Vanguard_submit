@@ -1,14 +1,21 @@
-# Vanguard Submission: Team - LoCo Quantum
+# WISER Quantum Project Portfolio Optimization
+
+## Team: LoCo Quantum
 
 **Team members: Zhuo Cao, Zhongyi Jiang, Ran Xue**
 
+| Name          | Enrollment ID       |
+| ------------- | ------------------- |
+| Ran Xue       | gst-pCQCGacrFeLAa8K |
+| Zhongyi Jiang | gst-AjdIwRwX2LdUMUr |
+| Zhuo Cao      | gst-5ZhNDTqXvsnDqUr |
 ---
 
 ## Overview
 
-We solve the portfolio optimization task for 20 bonds provided by the Vanguard team. 
+We solve the portfolio optimization task for provided dataset and using 20 bonds out of 31. 
 
-Our solution is a sample-based QAOA method relying on our pre-trained generated model namely generative quantum sampling (GQS). The whole process is implemented by `Pennylane`. For running our scripts, please configure a virtual environment by:
+Our solution is a sample-based QAOA method relying on our pre-trained generated model namely generative quantum sampling (GQS). Our algorithm consists of two sampling steps. A generative model is used to generate quantum circuit samples. Bitstrings are then sampled from those quantum circuits. More specifically, a GPT model is used for generating quantum circuits. The whole process is implemented by `Pennylane`. For running our scripts, please configure a virtual environment by:
 
 ```
 pip install requirements.txt
