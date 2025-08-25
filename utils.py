@@ -80,3 +80,30 @@ def hamming_distance_1_neighbors(binary_str: str) -> list[str]:
         neighbor = binary_str[:i] + flipped_bit + binary_str[i+1:]
         neighbors.append(neighbor)
     return neighbors
+
+def hamming1_scatter(prob_baseline: np.ndarray, prob_best: np.ndarray, num_qubits: int) -> np.ndarray:
+    """
+    For each basis index b (0..2^n-1), find the index in {b} ∪ {b xor 2^k | k=0..n-1}
+    with the largest baseline prob and scatter-add prob_best[b] into that index.
+    """
+    N = 1 << num_qubits                      # 2**num_qubits
+    idxs = np.arange(N, dtype=np.uint64)     # basis indices as integers
+
+    # Build neighbor matrix: [N, num_qubits] via XOR with each single-bit mask
+    flips = (1 << np.arange(num_qubits, dtype=np.uint64))           # [Q]
+    neighbors = idxs[:, None] ^ flips[None, :]                      # [N, Q]
+
+    # Include self as a neighbor at column 0 → concat to shape [N, Q+1]
+    neighbors = np.concatenate([idxs[:, None], neighbors], axis=1)  # [N, Q+1]
+
+    # Gather baseline probabilities for each candidate
+    nb_base = prob_baseline[neighbors]                              # [N, Q+1]
+
+    # Pick argmax candidate per row
+    best_cols = np.argmax(nb_base, axis=1)                          # [N]
+    best_targets = neighbors[np.arange(N), best_cols]               # [N]
+
+    # Scatter-add prob_best[b] into prob_hamming1[best_targets[b]]
+    out = np.zeros(N, dtype=prob_best.dtype)
+    np.add.at(out, best_targets, prob_best)
+    return out
